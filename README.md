@@ -19,19 +19,7 @@ This repository will build your team a private Odoo Enterprise Docker image.
 > Upstream image source code
 > 
 > - [adomi-io/odoo](https://github.com/adomi-io/odoo)
- 
-> [!TIP]
-> Example Downstream image
-> 
-> - [adomi-io/odoo-community-base](https://github.com/adomi-io/odoo-community-base)
-
-# Highlights
-
-- 🚀 **Fast local setup**: Docker Compose stack ready for development.
-- 🧩 **Addons-first workflow**: Mount your project addons into the container with a predictable path.
-- 🔧 **Config you can ship**: Keep Odoo config and environment values separated and portable.
-- 🪝 **Hooks support**: A place for startup/install scripts that run when the container boots.
-- 🧱 **Easy image extension**: Add Python deps, extra addons, or Enterprise without fighting Docker.
+> - [adomi-io/odoo-boilerplate](https://github.com/adomi-io/odoo-boilerplate)
 
 # Getting started
 
