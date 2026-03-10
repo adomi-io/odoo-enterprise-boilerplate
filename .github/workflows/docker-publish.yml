@@ -103,6 +103,8 @@ jobs:
           platforms: ${{ env.TARGET_PLATFORMS }}
           build-args: |
             ODOO_BASE_IMAGE=${{ env.ODOO_BASE_IMAGE }}
+          secrets: |
+            ODOO_ENTERPRISE_GITHUB_TOKEN=${{ secrets.ODOO_ENTERPRISE_GITHUB_TOKEN }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           push: true
