@@ -3,6 +3,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      secrets:
+        - ODOO_ENTERPRISE_GITHUB_TOKEN
     ports:
       - "8069:8069"
     # environment:
@@ -51,6 +53,10 @@ services:
       retries: 12
     networks:
       - app_odoo_network
+
+secrets:
+  ODOO_ENTERPRISE_GITHUB_TOKEN:
+    environment: ODOO_ENTERPRISE_GITHUB_TOKEN
 
 volumes:
   app_odoo_data:
