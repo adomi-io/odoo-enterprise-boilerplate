@@ -13,17 +13,24 @@ ARG SPECIFIC_HASH=""
 
 FROM alpine:latest AS enterprise
 
+ARG ODOO_ENTERPRISE_BRANCH
+ARG ODOO_ENTERPRISE_REPOSITORY
+ARG SPECIFIC_DATE
+ARG SPECIFIC_HASH
+ARG GIT_AUTH_FORMAT
+
 RUN apk add --no-cache \
     git
 
 WORKDIR /tmp/enterprise
 
 RUN --mount=type=secret,id=ODOO_ENTERPRISE_GITHUB_TOKEN,target=/run/secrets/ODOO_ENTERPRISE_GITHUB_TOKEN,uid=0,gid=0,required=true \
+    set -eu; \
     CREDS_FILE="$(mktemp)"; \
     TOKEN="$(cat /run/secrets/ODOO_ENTERPRISE_GITHUB_TOKEN)"; \
     test -n "${TOKEN}"; \
     printf "${GIT_AUTH_FORMAT}" "${TOKEN}" > "${CREDS_FILE}"; \
-    if [[ -n "${SPECIFIC_DATE}" || -n "${SPECIFIC_HASH}" ]]; then \
+    if [ -n "${SPECIFIC_DATE:-}" ] || [ -n "${SPECIFIC_HASH:-}" ]; then \
         DEPTH_ARGS=""; \
     else \
         DEPTH_ARGS="--depth 1"; \
@@ -36,13 +43,12 @@ RUN --mount=type=secret,id=ODOO_ENTERPRISE_GITHUB_TOKEN,target=/run/secrets/ODOO
         --branch "${ODOO_ENTERPRISE_BRANCH}" \
         --single-branch ${DEPTH_ARGS} \
         "${ODOO_ENTERPRISE_REPOSITORY}" .; \
-    if [[ -n "${SPECIFIC_HASH}" ]]; then \
+    if [ -n "${SPECIFIC_HASH:-}" ]; then \
         git reset --hard "${SPECIFIC_HASH}"; \
-    elif [[ -n "${SPECIFIC_DATE}" ]]; then \
-        git config \
-          --global \
-          --add safe.directory /source; \
+    elif [ -n "${SPECIFIC_DATE:-}" ]; then \
+        git config --global --add safe.directory /tmp/enterprise; \
         REV_HASH="$(git rev-list -n 1 --before="${SPECIFIC_DATE}" "origin/${ODOO_ENTERPRISE_BRANCH}")"; \
+        test -n "${REV_HASH}"; \
         git reset --hard "${REV_HASH}"; \
     fi; \
     rm -f "${CREDS_FILE}"; \
