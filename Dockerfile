@@ -19,8 +19,7 @@ ARG SPECIFIC_DATE
 ARG SPECIFIC_HASH
 ARG GIT_URL_FORMAT
 
-RUN apk add --no-cache \
-    git
+RUN apk add --no-cache git
 
 WORKDIR /tmp/enterprise
 
@@ -66,7 +65,6 @@ RUN --mount=type=secret,id=ODOO_ENTERPRISE_GITHUB_TOKEN,target=/run/secrets/ODOO
         git checkout FETCH_HEAD; \
     fi; \
     rm -rf .git
-
 
 FROM ${ODOO_BASE_IMAGE} AS configuration_layer
 
