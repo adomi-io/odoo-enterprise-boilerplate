@@ -129,7 +129,7 @@ The following build arguments are available:
 | `ODOO_ENTERPRISE_BRANCH` | The branch of the Odoo Enterprise repository to clone. | `19.0` |
 | `SPECIFIC_DATE` | Clone the repository as it was on this date (e.g., `2024-01-01`). | `""` |
 | `SPECIFIC_HASH` | Clone the repository at a specific git hash. | `""` |
-| `GIT_AUTH_FORMAT` | The format for git authentication. | `'https://x-access-token:%s@github.com\n'` |
+| `GIT_URL_FORMAT` | The format for git authentication. | `'https://x-access-token:%s@github.com\n'` |
 
 # Making your own base image
 

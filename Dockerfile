@@ -7,7 +7,7 @@
 ARG ODOO_BASE_IMAGE="ghcr.io/adomi-io/odoo:19.0"
 ARG ODOO_ENTERPRISE_REPOSITORY="https://github.com/odoo/enterprise"
 ARG ODOO_ENTERPRISE_BRANCH="19.0"
-ARG GIT_AUTH_FORMAT='https://x-access-token:%s@github.com\n'
+ARG GIT_URL_FORMAT='https://x-access-token:%s@github.com\n'
 ARG SPECIFIC_DATE=""
 ARG SPECIFIC_HASH=""
 
@@ -17,7 +17,7 @@ ARG ODOO_ENTERPRISE_BRANCH
 ARG ODOO_ENTERPRISE_REPOSITORY
 ARG SPECIFIC_DATE
 ARG SPECIFIC_HASH
-ARG GIT_AUTH_FORMAT
+ARG GIT_URL_FORMAT
 
 RUN apk add --no-cache \
     git
@@ -27,32 +27,46 @@ WORKDIR /tmp/enterprise
 RUN --mount=type=secret,id=ODOO_ENTERPRISE_GITHUB_TOKEN,target=/run/secrets/ODOO_ENTERPRISE_GITHUB_TOKEN,uid=0,gid=0,required=true \
     set -eu; \
     CREDS_FILE="$(mktemp)"; \
+    trap 'rm -f "${CREDS_FILE}"' EXIT; \
     TOKEN="$(cat /run/secrets/ODOO_ENTERPRISE_GITHUB_TOKEN)"; \
     test -n "${TOKEN}"; \
-    printf "${GIT_AUTH_FORMAT}" "${TOKEN}" > "${CREDS_FILE}"; \
-    if [ -n "${SPECIFIC_DATE:-}" ] || [ -n "${SPECIFIC_HASH:-}" ]; then \
-        DEPTH_ARGS=""; \
-    else \
-        DEPTH_ARGS="--depth 1"; \
-    fi; \
+    printf "${GIT_URL_FORMAT}" "${TOKEN}" > "${CREDS_FILE}"; \
     git -c "credential.helper=store --file=${CREDS_FILE}" \
         -c credential.useHttpPath=false \
         -c core.askPass=/bin/true \
         -c credential.https://github.com.useHttpPath=false \
-        clone \
-        --branch "${ODOO_ENTERPRISE_BRANCH}" \
-        --single-branch ${DEPTH_ARGS} \
-        "${ODOO_ENTERPRISE_REPOSITORY}" .; \
+        init .; \
+    git -c "credential.helper=store --file=${CREDS_FILE}" \
+        -c credential.useHttpPath=false \
+        -c core.askPass=/bin/true \
+        -c credential.https://github.com.useHttpPath=false \
+        remote add origin "${ODOO_ENTERPRISE_REPOSITORY}"; \
     if [ -n "${SPECIFIC_HASH:-}" ]; then \
-        git reset --hard "${SPECIFIC_HASH}"; \
+        git -c "credential.helper=store --file=${CREDS_FILE}" \
+            -c credential.useHttpPath=false \
+            -c core.askPass=/bin/true \
+            -c credential.https://github.com.useHttpPath=false \
+            fetch --depth 1 origin "${SPECIFIC_HASH}"; \
+        git checkout FETCH_HEAD; \
     elif [ -n "${SPECIFIC_DATE:-}" ]; then \
-        git config --global --add safe.directory /tmp/enterprise; \
-        REV_HASH="$(git rev-list -n 1 --before="${SPECIFIC_DATE}" "origin/${ODOO_ENTERPRISE_BRANCH}")"; \
+        git -c "credential.helper=store --file=${CREDS_FILE}" \
+            -c credential.useHttpPath=false \
+            -c core.askPass=/bin/true \
+            -c credential.https://github.com.useHttpPath=false \
+            fetch origin "${ODOO_ENTERPRISE_BRANCH}"; \
+        REV_HASH="$(git rev-list -n 1 --before="${SPECIFIC_DATE}" FETCH_HEAD)"; \
         test -n "${REV_HASH}"; \
-        git reset --hard "${REV_HASH}"; \
+        git checkout "${REV_HASH}"; \
+    else \
+        git -c "credential.helper=store --file=${CREDS_FILE}" \
+            -c credential.useHttpPath=false \
+            -c core.askPass=/bin/true \
+            -c credential.https://github.com.useHttpPath=false \
+            fetch --depth 1 origin "${ODOO_ENTERPRISE_BRANCH}"; \
+        git checkout FETCH_HEAD; \
     fi; \
-    rm -f "${CREDS_FILE}"; \
     rm -rf .git
+
 
 FROM ${ODOO_BASE_IMAGE} AS configuration_layer
 
