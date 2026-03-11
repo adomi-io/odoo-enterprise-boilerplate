@@ -51,6 +51,7 @@ cover/
 *.pot
 
 # Environments
+.env
 .env*
 !.env.example
 
