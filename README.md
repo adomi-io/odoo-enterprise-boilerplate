@@ -16,20 +16,21 @@ This repository will build your team a private Odoo Enterprise Docker image.
 
 
 > [!TIP]
-> **Want to lower your license costs?**
-> 
-> Try our [odoo-community-base](https://github.com/adomi-io/odoo-community-base) base image
-> which includes some helpful OCA packages and additional addons. We recommend giving this a try before committing to new
-> Odoo Enterprise commitments. Set the `ODOO_BASE_IMAGE` arg to:
-> ```md
-> ghcr.io/adomi-io/odoo-community-base:latest
-> ```
-
-> [!TIP]
 > Upstream image source code
 > 
 > - [adomi-io/odoo](https://github.com/adomi-io/odoo)
 > - [adomi-io/boilerplate-odoo](https://github.com/adomi-io/boilerplate-odoo)
+
+
+> [!TIP]
+> **Want to lower your license costs?**
+> 
+> Try our [odoo-community-base](https://github.com/adomi-io/odoo-community-base) base image
+> which includes some helpful OCA packages and additional addons. We recommend giving this a try before making new
+> Odoo Enterprise commitments. Set the `ODOO_BASE_IMAGE` arg to:
+> ```md
+> ghcr.io/adomi-io/odoo-community-base:latest
+> ```
 
 # Getting started
 
