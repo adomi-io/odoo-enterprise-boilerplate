@@ -39,7 +39,7 @@ This repository will build your team a private Odoo Enterprise Docker image.
 
 ## Setup this repository
 
-- Click the ["Use this template"]() button above.
+- Click the ["Use this template"](https://github.com/new?template_name=boilerplate-odoo-enterprise&template_owner=adomi-io&visibility=private) button above.
 - Ensure the `Visibility` is set to `Private`, and click `Create repository`.
 - The first GitHub action run will fail because it does not have access to the Odoo Enterprise repo.
 - Once the repository is created, go to the repository's `Settings` page. 
